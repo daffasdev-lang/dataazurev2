@@ -6,7 +6,6 @@
     <title>AI Data Analyst</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <style>
-        /* ... (CSS utama dari versi sebelumnya) ... */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
         :root {
             --background: #f7f8fc; --surface: #ffffff; --primary: #4f46e5; --primary-hover: #4338ca;
@@ -38,37 +37,33 @@
         }
         .bot-message .text { background-color: var(--bot-bubble); color: var(--text-primary); border-bottom-left-radius: 4px; }
         .user-message .text { background-color: var(--user-bubble); color: white; border-bottom-right-radius: 4px; }
-
-        /* --- PERUBAHAN CSS --- */
+        
+        /* --- PERUBAIKAN TATA LETAK & DESAIN INPUT AREA --- */
         .input-area {
-            padding: 12px 24px; /* Sedikit mengurangi padding vertikal */
-            display: flex;
-            flex-direction: column; /* Mengubah arah flexbox */
-            gap: 8px; /* Memberi jarak antara indikator dan input */
-            align-items: stretch; /* Membuat elemen melebar */
-            border-top: 1px solid var(--border-color);
-            background-color: var(--surface);
-            flex-shrink: 0;
+            padding: 12px 24px; display: flex; flex-direction: column; gap: 8px;
+            align-items: stretch; border-top: 1px solid var(--border-color);
+            background-color: var(--surface); flex-shrink: 0;
         }
-        .main-input-row {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
+        .main-input-row { display: flex; gap: 12px; align-items: center; }
+        
+        /* --- PERUBAIKAN DESAIN INDIKATOR FILE --- */
         .attachment-indicator {
             display: none; /* Sembunyi secara default */
-            padding: 8px 12px;
-            background-color: var(--bot-bubble);
-            border-radius: 12px;
-            font-size: 13px;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            animation: fadeIn 0.3s;
+            padding: 6px 8px 6px 12px; background-color: var(--bot-bubble);
+            border-radius: 12px; font-size: 13px; color: var(--text-secondary);
+            align-items: center; gap: 8px; animation: fadeIn 0.3s;
+            max-width: fit-content; /* Agar tidak melebar penuh */
         }
-        /* --- AKHIR PERUBAHAN CSS --- */
-
+        .attachment-indicator span {
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;
+        }
+        .remove-attachment-btn {
+            background: none; border: none; padding: 4px; cursor: pointer;
+            color: var(--text-secondary); border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; transition: background-color 0.2s;
+        }
+        .remove-attachment-btn:hover { background-color: rgba(0,0,0,0.1); }
+        
         .input-wrapper {
             flex-grow: 1; display: flex; align-items: center;
             background-color: var(--background); border-radius: 24px; padding: 4px;
@@ -99,7 +94,7 @@
 <body>
 
 <div class="chat-container">
-    <div class="chat-header">Data Azure</div>
+    <div class="chat-header">AI Data Analyst</div>
     <div class="chat-box" id="chatBox">
         <div class="message bot-message">
             <span class="text"><p>Halo! Silakan ajukan pertanyaan atau lampirkan file data untuk dianalisis.</p></span>
@@ -107,8 +102,10 @@
     </div>
     <div class="input-area">
         <div class="attachment-indicator" id="attachmentIndicator">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
             <span id="attachmentFilename"></span>
+            <button class="remove-attachment-btn" id="removeAttachmentBtn" title="Hapus File">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
         </div>
         <div class="main-input-row">
             <div class="input-wrapper">
@@ -123,47 +120,121 @@
             </button>
         </div>
     </div>
-    </div>
+</div>
 
 <script>
-    // --- JavaScript tidak perlu diubah logikanya ---
-    const N8N_WEBHOOK_URL = 'https://devdaffas-n8nautov2.hf.space/webhook-test/azuredata';
+    // --- KONFIGURASI WAJIB ---
+    const N8N_WEBHOOK_URL = 'https://devDaffas-n8nautov2.hf.space/webhook-test/azuredata';
     const API_KEY = ''; 
+    // -------------------------
+
     const chatBox = document.getElementById('chatBox');
     const userInput = document.getElementById('userInput');
     const fileInput = document.getElementById('fileInput');
     const sendButton = document.getElementById('sendButton');
     const attachmentIndicator = document.getElementById('attachmentIndicator');
     const attachmentFilename = document.getElementById('attachmentFilename');
+    const removeAttachmentBtn = document.getElementById('removeAttachmentBtn');
+
     const converter = new showdown.Converter({ tables: true });
     const sessionId = `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     let loadingBubbleElement = null;
+
     const showLoadingIndicator = () => { /* ... (kode sama) ... */ };
     const hideLoadingIndicator = () => { /* ... (kode sama) ... */ };
     const addMessage = (content, sender) => { /* ... (kode sama) ... */ };
     const sendMessage = async () => { /* ... (kode sama) ... */ };
     
-    // Implementasi lengkap fungsi (untuk copy-paste)
-    const showLoadingIndicator_impl = () => { const messageDiv = document.createElement('div'); messageDiv.className = 'message bot-message loading-bubble'; const textSpan = document.createElement('span'); textSpan.className = 'text'; textSpan.innerHTML = "<p>Analis sedang memproses...</p>"; messageDiv.appendChild(textSpan); chatBox.appendChild(messageDiv); loadingBubbleElement = messageDiv; };
+    // --- BAGIAN YANG DIPERBAIKI TOTAL ---
+    // Fungsi-fungsi ini sekarang didefinisikan dengan benar satu kali.
+    const showLoadingIndicator_impl = () => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message bot-message'; // Bukan lagi loading-bubble
+        const textSpan = document.createElement('span');
+        textSpan.className = 'text';
+        textSpan.innerHTML = "<p>Analis sedang memproses...</p>";
+        messageDiv.appendChild(textSpan);
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        loadingBubbleElement = messageDiv;
+    };
     const hideLoadingIndicator_impl = () => { if (loadingBubbleElement) { loadingBubbleElement.remove(); loadingBubbleElement = null; } };
-    const addMessage_impl = (content, sender) => { const messageDiv = document.createElement('div'); messageDiv.className = `message ${sender}-message`; const textSpan = document.createElement('span'); textSpan.className = 'text'; textSpan.innerHTML = content; messageDiv.appendChild(textSpan); chatBox.appendChild(messageDiv); };
-    const sendMessage_impl = async () => { const userMessage = userInput.value.trim(); const userFile = fileInput.files[0]; if (!userMessage && !userFile) return; if (userMessage) { addMessage(userMessage.replace(/</g, "&lt;").replace(/>/g, "&gt;"), 'user'); } userInput.value = ''; fileInput.value = ''; showLoadingIndicator(); if (userFile) { attachmentFilename.textContent = userFile.name; attachmentIndicator.style.display = 'flex'; } const formData = new FormData(); formData.append('message', userMessage); formData.append('sessionId', sessionId); if (userFile) formData.append('file', userFile); try { const fetchOptions = { method: 'POST', body: formData, headers: {}, }; if (API_KEY) { fetchOptions.headers['X-API-KEY'] = API_KEY; } const response = await fetch(N8N_WEBHOOK_URL, fetchOptions); hideLoadingIndicator(); attachmentIndicator.style.display = 'none'; if (!response.ok) { throw new Error(`HTTP error! Status: ${response.status}`); } const data = await response.json(); const botReplyMarkdown = data.reply || 'Maaf, saya tidak menerima balasan yang valid.'; const botReplyHtml = converter.makeHtml(botReplyMarkdown); addMessage(botReplyHtml, 'bot'); } catch (error) { console.error('Error:', error); hideLoadingIndicator(); attachmentIndicator.style.display = 'none'; addMessage(`Terjadi kesalahan: ${error.message}`, 'bot'); } };
+    const addMessage_impl = (content, sender) => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}-message`;
+        const textSpan = document.createElement('span');
+        textSpan.className = 'text';
+        textSpan.innerHTML = content;
+        messageDiv.appendChild(textSpan);
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
+    const sendMessage_impl = async () => {
+        const userMessage = userInput.value.trim();
+        const userFile = fileInput.files[0];
+        if (!userMessage && !userFile) return;
+
+        if (userMessage) {
+            addMessage(userMessage.replace(/</g, "&lt;").replace(/>/g, "&gt;"), 'user');
+        }
+        
+        userInput.value = ''; // Kosongkan input teks
+        showLoadingIndicator();
+
+        const formData = new FormData();
+        formData.append('message', userMessage);
+        formData.append('sessionId', sessionId);
+        if (userFile) {
+            formData.append('file', userFile);
+        }
+
+        try {
+            const fetchOptions = { method: 'POST', body: formData, headers: {}, };
+            if (API_KEY) { fetchOptions.headers['X-API-KEY'] = API_KEY; }
+
+            const response = await fetch(N8N_WEBHOOK_URL, fetchOptions);
+            hideLoadingIndicator();
+            
+            if (!response.ok) { throw new Error(`HTTP error! Status: ${response.status}`); }
+
+            const data = await response.json();
+            const botReplyMarkdown = data.reply || 'Maaf, saya tidak menerima balasan yang valid.';
+            const botReplyHtml = converter.makeHtml(botReplyMarkdown);
+            addMessage(botReplyHtml, 'bot');
+        } catch (error) {
+            console.error('Error:', error);
+            hideLoadingIndicator();
+            addMessage(`Terjadi kesalahan: ${error.message}`, 'bot');
+        } finally {
+            // Selalu reset input file dan indikator setelah selesai
+            fileInput.value = '';
+            attachmentIndicator.style.display = 'none';
+            userInput.placeholder = 'Ketik pesan atau lampirkan file...';
+        }
+    };
+
+    // Menetapkan implementasi yang benar ke nama fungsi
     showLoadingIndicator = showLoadingIndicator_impl;
     hideLoadingIndicator = hideLoadingIndicator_impl;
     addMessage = addMessage_impl;
     sendMessage = sendMessage_impl;
 
     sendButton.addEventListener('click', sendMessage);
-    userInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') sendMessage();
-    });
+    userInput.addEventListener('keypress', (event) => { if (event.key === 'Enter') sendMessage(); });
     
+    // Logika baru untuk menampilkan/menyembunyikan indikator file
     fileInput.addEventListener('change', () => {
         if (fileInput.files.length > 0) {
-            userInput.placeholder = `File dipilih: ${fileInput.files[0].name}`;
-        } else {
-            userInput.placeholder = 'Ketik pesan atau lampirkan file...';
+            attachmentFilename.textContent = fileInput.files[0].name;
+            attachmentIndicator.style.display = 'flex';
+            userInput.placeholder = 'Ketik pesan (opsional) lalu kirim';
         }
+    });
+
+    removeAttachmentBtn.addEventListener('click', () => {
+        fileInput.value = ''; // Hapus file yang dipilih
+        attachmentIndicator.style.display = 'none';
+        userInput.placeholder = 'Ketik pesan atau lampirkan file...';
     });
 </script>
 
