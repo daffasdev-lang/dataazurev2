@@ -3,50 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Data Analyst</title>
+    <title>Data Azzure</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         :root {
-            --background: #f7f8fc; --surface: #ffffff; --primary: #4f46e5; --primary-hover: #4338ca;
-            --text-primary: #1f2937; --text-secondary: #6b7280; --user-bubble: var(--primary);
-            --bot-bubble: #eef2ff; --border-color: #e5e7eb;
-            --glass-bg: rgba(255, 255, 255, 0.7); --glass-border: rgba(255, 255, 255, 0.3);
+            --background: #f7f8fc; 
+            --surface: #ffffff; 
+            --primary: #4f46e5; 
+            --primary-hover: #4338ca;
+            --text-primary: #1f2937; 
+            --text-secondary: #6b7280; 
+            --user-bubble: var(--primary);
+            --bot-bubble: #eef2ff; 
+            --border-color: #e5e7eb;
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.25);
         }
         * { box-sizing: border-box; }
         html, body { height: 100%; width: 100%; margin: 0; overflow: hidden; }
         body {
-            font-family: 'Inter', sans-serif; background-color: var(--background); display: flex;
-            justify-content: center; align-items: center; color: var(--text-primary);
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(170deg, #f7f8fc, #eef2ff);
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            color: var(--text-primary);
         }
         .chat-container {
-            width: 100%; height: 100%; background-color: var(--surface);
-            display: flex; flex-direction: column; overflow: hidden; position: relative;
+            width: 100%; 
+            height: 100%; 
+            background-color: var(--surface);
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+            position: relative;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px -10px rgba(79, 70, 229, 0.2);
+            transform: scale(1);
+            animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        @keyframes scaleIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
         .dynamic-island {
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10;
-            padding: 10px 20px; font-weight: 500; font-size: 16px; color: var(--text-primary);
-            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-            background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border); border-radius: 24px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            display: flex; align-items: center; gap: 8px;
+            position: absolute; top: 20px; left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            padding: 10px 24px;
+            font-weight: 600; 
+            font-size: 16px; 
+            color: var(--text-primary);
+            background: var(--glass-bg);
+            backdrop-filter: blur(18px) saturate(180%);
+            -webkit-backdrop-filter: blur(18px) saturate(180%);
+            border: 1px solid var(--glass-border); 
+            border-radius: 30px; 
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            display: flex; 
+            align-items: center; 
+            gap: 12px;
+            transition: all 0.3s ease-in-out;
         }
-        .dynamic-island.processing { padding-left: 12px; padding-right: 16px; }
+
         .processing-spinner {
-            width: 18px; height: 18px; border: 2px solid var(--primary); border-top-color: transparent;
-            border-radius: 50%; animation: spin 1s linear infinite; display: none;
+            width: 18px; height: 18px; 
+            border: 2px solid var(--primary); 
+            border-top-color: transparent;
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+            display: none;
+            transition: opacity 0.3s ease;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         .chat-box {
             flex-grow: 1; padding: 24px; padding-top: 80px; overflow-y: auto;
         }
-        .message { margin-bottom: 20px; display: flex; flex-direction: column; animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .bot-message { align-items: flex-start; }
-        .user-message { align-items: flex-end; }
+        .message { 
+            margin-bottom: 20px; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        @keyframes message-in-user {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes message-in-bot {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .bot-message { 
+            align-items: flex-start; 
+            animation: message-in-bot 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: bottom left;
+        }
+        .user-message { 
+            align-items: flex-end; 
+            animation: message-in-user 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: bottom right;
+        }
         .message .text {
-            padding: 12px 18px; border-radius: 20px; max-width: 80%;
-            word-wrap: break-word; line-height: 1.5; font-size: 15px;
+            padding: 12px 18px; 
+            border-radius: 20px; 
+            max-width: 80%;
+            word-wrap: break-word; 
+            line-height: 1.5; 
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         .bot-message .text { background-color: var(--bot-bubble); color: var(--text-primary); border-bottom-left-radius: 4px; }
         .user-message .text { background-color: var(--user-bubble); color: white; border-bottom-right-radius: 4px; }
@@ -74,6 +139,10 @@
         .input-wrapper {
             flex-grow: 1; display: flex; align-items: center;
             background-color: var(--background); border-radius: 24px; padding: 4px;
+            transition: box-shadow 0.2s;
+        }
+        .input-wrapper:focus-within {
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
         }
         #userInput {
             flex-grow: 1; border: none; background: none; padding: 8px 16px; font-size: 15px;
@@ -90,9 +159,10 @@
         #sendButton {
             background-color: var(--primary); color: white; border: none; border-radius: 50%; width: 40px;
             height: 40px; font-size: 20px; cursor: pointer; flex-shrink: 0; display: flex;
-            align-items: center; justify-content: center; transition: background-color 0.2s;
+            align-items: center; justify-content: center; transition: background-color 0.2s, transform 0.1s;
         }
         #sendButton:hover { background-color: var(--primary-hover); }
+        #sendButton:active { transform: scale(0.9); }
         .message .text table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 14px; }
         .message .text th, .message .text td { border: 1px solid var(--border-color); padding: 10px; text-align: left; }
         .message .text th { background-color: var(--bot-bubble); font-weight: 600; }
@@ -103,7 +173,7 @@
 <div class="chat-container">
     <div class="dynamic-island" id="dynamicIsland">
         <div class="processing-spinner" id="processingSpinner"></div>
-        <span id="headerText">AI Data Analyst</span>
+        <span id="headerText">Data Azzure</span>
     </div>
     
     <div class="chat-box" id="chatBox">
@@ -162,14 +232,15 @@
         const textSpan = document.createElement('span');
         textSpan.className = 'text';
         textSpan.innerHTML = content;
+        messageDiv.appendChild(textSpan);
         chatBox.appendChild(messageDiv);
         chatBox.scrollTop = chatBox.scrollHeight;
+        return messageDiv;
     };
 
     const toggleProcessingState = (isProcessing) => {
-        dynamicIsland.classList.toggle('processing', isProcessing);
-        processingSpinner.style.display = isProcessing ? 'block' : 'none';
-        headerText.textContent = isProcessing ? 'Menganalisis...' : 'AI Data Analyst';
+        // Intentionally left blank to completely isolate the dynamic island
+        // from the processing state.
     };
 
     const sendMessage = async () => {
@@ -177,12 +248,29 @@
         const userFile = fileInput.files[0];
         if (!userMessage && !userFile) return;
 
+        let messageContent = '';
         if (userMessage) {
-            addMessage(userMessage.replace(/</g, "&lt;").replace(/>/g, "&gt;"), 'user');
+            messageContent = userMessage.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        if (userFile) {
+            if (messageContent) {
+                messageContent += '<br>';
+            }
+            messageContent += `<i>File terlampir: ${userFile.name}</i>`;
+        }
+
+        if (messageContent) {
+            addMessage(messageContent, 'user');
         }
         
         userInput.value = '';
         toggleProcessingState(true);
+
+        const loadingBubble = addMessage(
+            '<div class="processing-spinner" style="display: inline-block; width: 18px; height: 18px; margin-right: 8px; vertical-align: middle;"></div> Menganalisis...',
+            'bot'
+        );
 
         const formData = new FormData();
         formData.append('message', userMessage);
@@ -201,10 +289,12 @@
             const data = await response.json();
             const botReplyMarkdown = data.reply || 'Maaf, saya tidak menerima balasan yang valid.';
             const botReplyHtml = converter.makeHtml(botReplyMarkdown);
-            addMessage(botReplyHtml, 'bot');
+            
+            loadingBubble.querySelector('.text').innerHTML = botReplyHtml;
+
         } catch (error) {
             console.error('Error:', error);
-            addMessage(`Terjadi kesalahan: ${error.message}`, 'bot');
+            loadingBubble.querySelector('.text').innerHTML = `Terjadi kesalahan: ${error.message}`;
         } finally {
             toggleProcessingState(false);
             fileInput.value = '';
