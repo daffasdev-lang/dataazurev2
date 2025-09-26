@@ -37,22 +37,17 @@
         }
         .bot-message .text { background-color: var(--bot-bubble); color: var(--text-primary); border-bottom-left-radius: 4px; }
         .user-message .text { background-color: var(--user-bubble); color: white; border-bottom-right-radius: 4px; }
-        
-        /* --- PERUBAIKAN TATA LETAK & DESAIN INPUT AREA --- */
         .input-area {
             padding: 12px 24px; display: flex; flex-direction: column; gap: 8px;
             align-items: stretch; border-top: 1px solid var(--border-color);
             background-color: var(--surface); flex-shrink: 0;
         }
         .main-input-row { display: flex; gap: 12px; align-items: center; }
-        
-        /* --- PERUBAIKAN DESAIN INDIKATOR FILE --- */
         .attachment-indicator {
-            display: none; /* Sembunyi secara default */
-            padding: 6px 8px 6px 12px; background-color: var(--bot-bubble);
+            display: none; padding: 6px 8px 6px 12px; background-color: var(--bot-bubble);
             border-radius: 12px; font-size: 13px; color: var(--text-secondary);
             align-items: center; gap: 8px; animation: fadeIn 0.3s;
-            max-width: fit-content; /* Agar tidak melebar penuh */
+            max-width: fit-content;
         }
         .attachment-indicator span {
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;
@@ -63,7 +58,6 @@
             align-items: center; justify-content: center; transition: background-color 0.2s;
         }
         .remove-attachment-btn:hover { background-color: rgba(0,0,0,0.1); }
-        
         .input-wrapper {
             flex-grow: 1; display: flex; align-items: center;
             background-color: var(--background); border-radius: 24px; padding: 4px;
@@ -125,7 +119,7 @@
 <script>
     // --- KONFIGURASI WAJIB ---
     const N8N_WEBHOOK_URL = 'https://devDaffas-n8nautov2.hf.space/webhook-test/azuredata';
-    const API_KEY = ''; 
+    const API_KEY = ''; // Kosongkan jika auth di n8n = None
     // -------------------------
 
     const chatBox = document.getElementById('chatBox');
@@ -140,16 +134,9 @@
     const sessionId = `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     let loadingBubbleElement = null;
 
-    const showLoadingIndicator = () => { /* ... (kode sama) ... */ };
-    const hideLoadingIndicator = () => { /* ... (kode sama) ... */ };
-    const addMessage = (content, sender) => { /* ... (kode sama) ... */ };
-    const sendMessage = async () => { /* ... (kode sama) ... */ };
-    
-    // --- BAGIAN YANG DIPERBAIKI TOTAL ---
-    // Fungsi-fungsi ini sekarang didefinisikan dengan benar satu kali.
-    const showLoadingIndicator_impl = () => {
+    const showLoadingIndicator = () => {
         const messageDiv = document.createElement('div');
-        messageDiv.className = 'message bot-message'; // Bukan lagi loading-bubble
+        messageDiv.className = 'message bot-message';
         const textSpan = document.createElement('span');
         textSpan.className = 'text';
         textSpan.innerHTML = "<p>Analis sedang memproses...</p>";
@@ -158,8 +145,15 @@
         chatBox.scrollTop = chatBox.scrollHeight;
         loadingBubbleElement = messageDiv;
     };
-    const hideLoadingIndicator_impl = () => { if (loadingBubbleElement) { loadingBubbleElement.remove(); loadingBubbleElement = null; } };
-    const addMessage_impl = (content, sender) => {
+
+    const hideLoadingIndicator = () => {
+        if (loadingBubbleElement) {
+            loadingBubbleElement.remove();
+            loadingBubbleElement = null;
+        }
+    };
+
+    const addMessage = (content, sender) => {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}-message`;
         const textSpan = document.createElement('span');
@@ -169,7 +163,8 @@
         chatBox.appendChild(messageDiv);
         chatBox.scrollTop = chatBox.scrollHeight;
     };
-    const sendMessage_impl = async () => {
+
+    const sendMessage = async () => {
         const userMessage = userInput.value.trim();
         const userFile = fileInput.files[0];
         if (!userMessage && !userFile) return;
@@ -178,7 +173,7 @@
             addMessage(userMessage.replace(/</g, "&lt;").replace(/>/g, "&gt;"), 'user');
         }
         
-        userInput.value = ''; // Kosongkan input teks
+        userInput.value = '';
         showLoadingIndicator();
 
         const formData = new FormData();
@@ -190,12 +185,16 @@
 
         try {
             const fetchOptions = { method: 'POST', body: formData, headers: {}, };
-            if (API_KEY) { fetchOptions.headers['X-API-KEY'] = API_KEY; }
+            if (API_KEY) {
+                fetchOptions.headers['X-API-KEY'] = API_KEY;
+            }
 
             const response = await fetch(N8N_WEBHOOK_URL, fetchOptions);
             hideLoadingIndicator();
             
-            if (!response.ok) { throw new Error(`HTTP error! Status: ${response.status}`); }
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
 
             const data = await response.json();
             const botReplyMarkdown = data.reply || 'Maaf, saya tidak menerima balasan yang valid.';
@@ -206,23 +205,16 @@
             hideLoadingIndicator();
             addMessage(`Terjadi kesalahan: ${error.message}`, 'bot');
         } finally {
-            // Selalu reset input file dan indikator setelah selesai
             fileInput.value = '';
             attachmentIndicator.style.display = 'none';
             userInput.placeholder = 'Ketik pesan atau lampirkan file...';
         }
     };
 
-    // Menetapkan implementasi yang benar ke nama fungsi
-    showLoadingIndicator = showLoadingIndicator_impl;
-    hideLoadingIndicator = hideLoadingIndicator_impl;
-    addMessage = addMessage_impl;
-    sendMessage = sendMessage_impl;
-
+    // Event listeners kini berada di akhir dan akan berfungsi dengan benar
     sendButton.addEventListener('click', sendMessage);
     userInput.addEventListener('keypress', (event) => { if (event.key === 'Enter') sendMessage(); });
     
-    // Logika baru untuk menampilkan/menyembunyikan indikator file
     fileInput.addEventListener('change', () => {
         if (fileInput.files.length > 0) {
             attachmentFilename.textContent = fileInput.files[0].name;
@@ -232,7 +224,7 @@
     });
 
     removeAttachmentBtn.addEventListener('click', () => {
-        fileInput.value = ''; // Hapus file yang dipilih
+        fileInput.value = '';
         attachmentIndicator.style.display = 'none';
         userInput.placeholder = 'Ketik pesan atau lampirkan file...';
     });
