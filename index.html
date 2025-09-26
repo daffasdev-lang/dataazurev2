@@ -214,7 +214,7 @@
 
 <script>
     // --- KONFIGURASI WAJIB ---
-    const N8N_WEBHOOK_URL = 'https://sainsdata.codepro.id/webhook-test/azuredata';
+    const N8N_WEBHOOK_URL = 'https://devDaffas-n8nautov2.hf.space/webhook-test/azuredata';
     const API_KEY = ''; // Kosongkan jika auth di n8n = None
     // -------------------------
 
@@ -235,7 +235,7 @@
         // Menggunakan teks, bukan titik-titik
         textSpan.innerHTML = "<p>Analis sedang memproses...</p>";
         messageDiv.appendChild(textSpan);
-        chatBox.insertBefore(messageDiv, chatBox.firstChild);
+        chatBox.appendChild(messageDiv);
         loadingBubbleElement = messageDiv;
     };
 
@@ -253,7 +253,7 @@
         textSpan.className = 'text';
         textSpan.innerHTML = content;
         messageDiv.appendChild(textSpan);
-        chatBox.insertBefore(messageDiv, chatBox.firstChild);
+        chatBox.appendChild(messageDiv);
     };
 
     const sendMessage = async () => {
