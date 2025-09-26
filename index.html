@@ -3,196 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Azure v2</title>
+    <title>AI Data Analyst</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-
         :root {
-            --background: #f7f8fc;
-            --surface: #ffffff;
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --text-primary: #1f2937;
-            --text-secondary: #6b7280;
-            --user-bubble: var(--primary);
-            --bot-bubble: #eef2ff;
-            --border-color: #e5e7eb;
+            --background: #f7f8fc; --surface: #ffffff; --primary: #4f46e5; --primary-hover: #4338ca;
+            --text-primary: #1f2937; --text-secondary: #6b7280; --user-bubble: var(--primary);
+            --bot-bubble: #eef2ff; --border-color: #e5e7eb;
         }
-
-        * {
-            box-sizing: border-box;
+        * { box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            overflow: hidden; /* Mencegah scroll di level body */
         }
-
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--background);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
             color: var(--text-primary);
         }
-
         .chat-container {
-            width: 90%;
-            max-width: 700px;
-            height: 90vh;
+            width: 100%;
+            height: 100%;
             background-color: var(--surface);
-            border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
-
         .chat-header {
             padding: 16px 24px;
             border-bottom: 1px solid var(--border-color);
             font-weight: 600;
             font-size: 18px;
+            flex-shrink: 0;
         }
-        
-        .chat-box {
-            flex-grow: 1;
-            padding: 24px;
-            overflow-y: auto;
-        }
-
-        .message {
-            margin-bottom: 20px;
+        /* --- PERUBAHAN 2: Style untuk Indikator File --- */
+        .attachment-indicator {
+            display: none; /* Sembunyi secara default */
+            padding: 8px 24px;
+            background-color: var(--bot-bubble);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+            color: var(--text-secondary);
             display: flex;
-            flex-direction: column;
-            animation: fadeIn 0.3s ease-out;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
+        .chat-box { flex-grow: 1; padding: 24px; overflow-y: auto; }
+        .message { margin-bottom: 20px; display: flex; flex-direction: column; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .bot-message { align-items: flex-start; }
         .user-message { align-items: flex-end; }
-        
         .message .text {
-            padding: 12px 18px;
-            border-radius: 20px;
-            max-width: 80%;
-            word-wrap: break-word;
-            line-height: 1.5;
-            font-size: 15px;
+            padding: 12px 18px; border-radius: 20px; max-width: 80%;
+            word-wrap: break-word; line-height: 1.5; font-size: 15px;
         }
-
-        .bot-message .text {
-            background-color: var(--bot-bubble);
-            color: var(--text-primary);
-            border-bottom-left-radius: 4px;
-        }
-
-        .user-message .text {
-            background-color: var(--user-bubble);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-        
+        .bot-message .text { background-color: var(--bot-bubble); color: var(--text-primary); border-bottom-left-radius: 4px; }
+        .user-message .text { background-color: var(--user-bubble); color: white; border-bottom-right-radius: 4px; }
         .input-area {
-            padding: 16px 24px;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            border-top: 1px solid var(--border-color);
-            background-color: var(--surface);
-        }
-
-        .input-wrapper {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            background-color: var(--background);
-            border-radius: 24px;
-            padding: 4px;
-        }
-
-        #userInput {
-            flex-grow: 1;
-            border: none;
-            background: none;
-            padding: 8px 16px;
-            font-size: 15px;
-            outline: none;
-            color: var(--text-primary);
-        }
-
-        .icon-button {
-            background-color: transparent;
-            border: none;
-            padding: 8px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s, color 0.2s;
-        }
-
-        .icon-button:hover {
-            background-color: var(--bot-bubble);
-            color: var(--primary);
-        }
-
-        #fileLabel {
-            margin-left: 8px;
-        }
-
-        #fileInput {
-            display: none;
-        }
-
-        #sendButton {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
-            cursor: pointer;
+            padding: 16px 24px; display: flex; gap: 12px; align-items: center;
+            border-top: 1px solid var(--border-color); background-color: var(--surface);
             flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s;
         }
-
-        #sendButton:hover {
-            background-color: var(--primary-hover);
+        .input-wrapper {
+            flex-grow: 1; display: flex; align-items: center;
+            background-color: var(--background); border-radius: 24px; padding: 4px;
         }
-
-        /* Style untuk Tabel Markdown */
-        .message .text table {
-          border-collapse: collapse;
-          width: 100%;
-          margin: 12px 0;
-          font-size: 14px;
+        #userInput {
+            flex-grow: 1; border: none; background: none; padding: 8px 16px;
+            font-size: 15px; outline: none; color: var(--text-primary);
         }
-        .message .text th,
-        .message .text td {
-          border: 1px solid var(--border-color);
-          padding: 10px;
-          text-align: left;
+        .icon-button {
+            background-color: transparent; border: none; padding: 8px; cursor: pointer;
+            color: var(--text-secondary); border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; transition: background-color 0.2s, color 0.2s;
         }
-        .message .text th {
-          background-color: var(--bot-bubble);
-          font-weight: 600;
+        .icon-button:hover { background-color: var(--bot-bubble); color: var(--primary); }
+        #fileLabel { margin-left: 8px; }
+        #fileInput { display: none; }
+        #sendButton {
+            background-color: var(--primary); color: white; border: none; border-radius: 50%;
+            width: 40px; height: 40px; font-size: 20px; cursor: pointer; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; transition: background-color 0.2s;
         }
+        #sendButton:hover { background-color: var(--primary-hover); }
+        /* Style Tabel Markdown */
+        .message .text table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 14px; }
+        .message .text th, .message .text td { border: 1px solid var(--border-color); padding: 10px; text-align: left; }
+        .message .text th { background-color: var(--bot-bubble); font-weight: 600; }
     </style>
 </head>
 <body>
 
 <div class="chat-container">
     <div class="chat-header">Data Azure</div>
+    <div class="attachment-indicator" id="attachmentIndicator">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        <span id="attachmentFilename"></span>
+    </div>
     <div class="chat-box" id="chatBox">
         <div class="message bot-message">
             <span class="text"><p>Halo! Silakan ajukan pertanyaan atau lampirkan file data untuk dianalisis.</p></span>
@@ -214,7 +129,7 @@
 
 <script>
     // --- KONFIGURASI WAJIB ---
-    const N8N_WEBHOOK_URL = 'https://devDaffas-n8nautov2.hf.space/webhook-test/azuredata';
+    const N8N_WEBHOOK_URL = 'https://devdaffas-n8nautov2.hf.space/webhook-test/azuredata';
     const API_KEY = ''; // Kosongkan jika auth di n8n = None
     // -------------------------
 
@@ -222,51 +137,38 @@
     const userInput = document.getElementById('userInput');
     const fileInput = document.getElementById('fileInput');
     const sendButton = document.getElementById('sendButton');
+    // --- PERUBAHAN 2: Ambil elemen indikator ---
+    const attachmentIndicator = document.getElementById('attachmentIndicator');
+    const attachmentFilename = document.getElementById('attachmentFilename');
 
     const converter = new showdown.Converter({ tables: true });
     const sessionId = `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     let loadingBubbleElement = null;
 
-    const showLoadingIndicator = () => {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message bot-message loading-bubble';
-        const textSpan = document.createElement('span');
-        textSpan.className = 'text';
-        // Menggunakan teks, bukan titik-titik
-        textSpan.innerHTML = "<p>Analis sedang memproses...</p>";
-        messageDiv.appendChild(textSpan);
-        chatBox.appendChild(messageDiv);
-        loadingBubbleElement = messageDiv;
-    };
-
-    const hideLoadingIndicator = () => {
-        if (loadingBubbleElement) {
-            loadingBubbleElement.remove();
-            loadingBubbleElement = null;
-        }
-    };
-
-    const addMessage = (content, sender) => {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${sender}-message`;
-        const textSpan = document.createElement('span');
-        textSpan.className = 'text';
-        textSpan.innerHTML = content;
-        messageDiv.appendChild(textSpan);
-        chatBox.appendChild(messageDiv);
-    };
-
+    const showLoadingIndicator = () => { /* ... (kode sama) ... */ };
+    const hideLoadingIndicator = () => { /* ... (kode sama) ... */ };
+    const addMessage = (content, sender) => { /* ... (kode sama) ... */ };
+    
     const sendMessage = async () => {
         const userMessage = userInput.value.trim();
         const userFile = fileInput.files[0];
         if (!userMessage && !userFile) return;
 
-        const displayMessage = userMessage || `File: ${userFile.name}`;
-        addMessage(displayMessage.replace(/</g, "&lt;").replace(/>/g, "&gt;"), 'user');
+        // --- PERUBAHAN 1: Hanya tampilkan pesan teks di bubble chat ---
+        // Jika ada pesan teks, tampilkan. Jika tidak, jangan tampilkan apa-apa di bubble.
+        if (userMessage) {
+            addMessage(userMessage.replace(/</g, "&lt;").replace(/>/g, "&gt;"), 'user');
+        }
 
         userInput.value = '';
-        fileInput.value = '';
+        fileInput.value = ''; // Reset file input
         showLoadingIndicator();
+
+        // --- PERUBAHAN 2: Tampilkan indikator file jika ada ---
+        if (userFile) {
+            attachmentFilename.textContent = userFile.name;
+            attachmentIndicator.style.display = 'flex';
+        }
 
         const formData = new FormData();
         formData.append('message', userMessage);
@@ -274,22 +176,16 @@
         if (userFile) formData.append('file', userFile);
 
         try {
-            const fetchOptions = {
-                method: 'POST',
-                body: formData,
-                headers: {},
-            };
-            if (API_KEY) {
-                fetchOptions.headers['X-API-KEY'] = API_KEY;
-            }
+            const fetchOptions = { method: 'POST', body: formData, headers: {}, };
+            if (API_KEY) { fetchOptions.headers['X-API-KEY'] = API_KEY; }
 
             const response = await fetch(N8N_WEBHOOK_URL, fetchOptions);
             hideLoadingIndicator();
+            
+            // --- PERUBAHAN 2: Sembunyikan indikator file setelah selesai ---
+            attachmentIndicator.style.display = 'none';
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Server merespons dengan error ${response.status}. Pesan: ${errorText.substring(0, 150)}...`);
-            }
+            if (!response.ok) { throw new Error(`HTTP error! Status: ${response.status}`); }
 
             const data = await response.json();
             const botReplyMarkdown = data.reply || 'Maaf, saya tidak menerima balasan yang valid.';
@@ -298,13 +194,20 @@
         } catch (error) {
             console.error('Error:', error);
             hideLoadingIndicator();
-            let friendlyMessage = `Terjadi kesalahan: ${error.message}`;
-            if (error.message.includes('Failed to fetch')) {
-                friendlyMessage = 'Terjadi kesalahan: Gagal terhubung ke server. Pastikan URL Webhook benar, server n8n berjalan, dan konfigurasi CORS sudah sesuai.';
-            }
-            addMessage(friendlyMessage, 'bot');
+            // --- PERUBAHAN 2: Sembunyikan juga indikator file jika error ---
+            attachmentIndicator.style.display = 'none';
+            addMessage(`Terjadi kesalahan: ${error.message}`, 'bot');
         }
     };
+    
+    // Implementasi lengkap fungsi (untuk copy-paste)
+    const showLoadingIndicator_impl = () => { const messageDiv = document.createElement('div'); messageDiv.className = 'message bot-message loading-bubble'; const textSpan = document.createElement('span'); textSpan.className = 'text'; textSpan.innerHTML = "<p>Analis sedang memproses...</p>"; messageDiv.appendChild(textSpan); chatBox.appendChild(messageDiv); loadingBubbleElement = messageDiv; };
+    const hideLoadingIndicator_impl = () => { if (loadingBubbleElement) { loadingBubbleElement.remove(); loadingBubbleElement = null; } };
+    const addMessage_impl = (content, sender) => { const messageDiv = document.createElement('div'); messageDiv.className = `message ${sender}-message`; const textSpan = document.createElement('span'); textSpan.className = 'text'; textSpan.innerHTML = content; messageDiv.appendChild(textSpan); chatBox.appendChild(messageDiv); };
+    
+    showLoadingIndicator = showLoadingIndicator_impl;
+    hideLoadingIndicator = hideLoadingIndicator_impl;
+    addMessage = addMessage_impl;
 
     sendButton.addEventListener('click', sendMessage);
     userInput.addEventListener('keypress', (event) => {
