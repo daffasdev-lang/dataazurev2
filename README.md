@@ -1,29 +1,20 @@
-Tentu, berdasarkan file `index.html` yang Anda berikan untuk proyek "Data Azzure", berikut adalah draf README.md yang komprehensif, menarik, dan "powerfull" yang bisa Anda gunakan.
-
------
-
-\<div align="center"\>
+<div align="center">
 
 # ✨ Data Azzure v2 ✨
 
 **Sebuah antarmuka chat yang cerdas, ringan, dan modern untuk menganalisis data Anda secara instan.**
 
-\</div\>
+</div\>
 
-\<p align="center"\>
-\<img src="img/logo.png" alt="Data Azzure logo" width="80%"\>
-<br>
-\<img src="image.png" alt="Data Azzure ss" width="80%"\>
-\</p\>
-
-\<p align="center"\>
-\<img src="[https://img.shields.io/badge/Tech-Vanilla\_JS-F7DF1E?style=for-the-badge\&logo=javascript](https://www.google.com/search?q=https://img.shields.io/badge/Tech-Vanilla_JS-F7DF1E%3Fstyle%3Dfor-the-badge%26logo%3Djavascript)" alt="Vanilla JS"\>
-\<img src="[https://img.shields.io/badge/Backend-n8n-1A82E3?style=for-the-badge\&logo=n8n](https://www.google.com/search?q=https://img.shields.io/badge/Backend-n8n-1A82E3%3Fstyle%3Dfor-the-badge%26logo%3Dn8n)" alt="n8n ready"\>
-\<img src="[https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge](https://www.google.com/search?q=https://img.shields.io/badge/License-MIT-blue.svg%3Fstyle%3Dfor-the-badge)" alt="License MIT"\>
-\<img src="[https://img.shields.io/github/stars/daffasdev-lang/dataazurev2?style=for-the-badge](https://www.google.com/search?q=https://img.shields.io/github/stars/daffasdev-lang/dataazurev2%3Fstyle%3Dfor-the-badge)" alt="GitHub Stars"\>
-\</p\>
+<p align="center">
+<img src="img/logo.png" alt="Data Azzure logo" width="80%">
+<p>
 
 -----
+
+<p align="center">
+<img src="image.png" alt="Data Azzure ss" width="80%">
+<p>
 
 ## 🚀 Tentang Proyek Ini
 
